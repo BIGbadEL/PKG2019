@@ -35,7 +35,7 @@ public:
         outtextxy(target, 350, 40, "HSV");
         outtextxy(target, 600, 290, "V = " + _L);
         outtextxy(target, 50, 320, "CMY");
-        outtextxy(target, 300, 570, "Y = " + _Y);
+        outtextxy(target, 300, 570, "Y = " + _Y + " %");
         outtextxy(target, 350,320, "RGB");
         outtextxy(target, 600, 570, "B = " + _B);
     }

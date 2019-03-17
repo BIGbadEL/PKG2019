@@ -93,9 +93,28 @@ RGB convert(const HSV& col) {
     return result;
 }
 
+
+float fmf(float a, int b){
+
+    if(a < static_cast<float>(b)){
+        return a;
+    }
+
+    int temp = static_cast<int>(a);
+    float rest = a - static_cast<float>(temp);
+
+    return static_cast<float>((temp % b)) + rest;
+}
+
+float faf(float a){
+    if(a > 0.0f) return a;
+    return -a;
+}
+
 RGB convert(const HSL& col) {
     float C = ( 1.0f - fabsf(2.0f * col.L - 1.0f)) * col.S;
-    float X = C * ( 1.0f - fabsf(fmodf(col.H * 0.016666f, 2.0f) - 1.0f));
+    float X = C * ( 1.0f - faf(fmf(col.H * 0.016666f, 2) - 1.0f));
+//    float X = C * ( 1.0f - fabsf(fmodf(col.H * 0.016666f, 2.0f) - 1.0f));
     float m = col.L - C / 2.0f;
     RGB result = { };
 

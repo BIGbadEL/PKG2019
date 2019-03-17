@@ -28,6 +28,7 @@ public:
         _shapes.push_back(new Circle_hsv(350, 40, 125));
         _shapes.push_back(new Circle_cmy(50, 320, 125));
         _shapes.push_back(new Circle_rgb(350, 320, 125));
+
     }
 
     ~Window() {
@@ -42,7 +43,8 @@ public:
 
     void update() {
         _window.clear(sf::Color::White);
-        processEvents();
+
+         processEvents();
 
         for (auto shape : _shapes) {
             _window.draw(shape->getToDraw());
@@ -57,6 +59,9 @@ public:
         _window.draw(_slider.getToDraw());
         _window.draw(_menu);
         _window.display();
+
+
+
         processTime();
     }
 
@@ -94,7 +99,9 @@ private:
             if(_mouseY >= slider_pos_y && _mouseY <= slider_pos_y + size_y){
                 float ratio = _slider.new_bar_pos(static_cast<float>(_mouseY));
                 for(auto el : _shapes){
-                    el->update(ratio);
+                    std::async(std::launch::async, [&el, ratio](){
+                        el->update(ratio);
+                    });
                 }
                 _menu.setStrings(ratio);
                 _mouseButtonHold = true;
