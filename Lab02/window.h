@@ -8,9 +8,12 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <cmath>
+#include <future>
+#include <unistd.h>
 #include "Menu.h"
 #include "circle.h"
 #include "slider.h"
+
 
 class Window {
 public:
@@ -75,7 +78,10 @@ private:
             if(_mouseY >= slider_pos_y && _mouseY <= slider_pos_y + size_y){
                 float ratio = _slider.new_bar_pos(static_cast<float>(_mouseY));
                 for(auto el : _shapes){
-                    el->update(ratio);
+                    std::async(std::launch::async, [&el, ratio](){
+                        el->update(ratio);
+                    });
+
                 }
                 _menu.setStrings(ratio);
             }
@@ -122,7 +128,6 @@ private:
     int _mouseX = 0;
     int _mouseY = 0;
     std::vector<Circle*> _shapes; // przy optymalizacji przerobić na std::array bo znamy ilość elementów z góry !!
-    float intensity = 0.51f;
     bool _mouseButtonHold = false;
 };
 

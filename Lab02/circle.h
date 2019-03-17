@@ -11,6 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include "colors.h"
 
+#define KIND_OF_SMALL_NUMBER 0.03f
 
 class Circle {
 public:
@@ -71,7 +72,7 @@ public:
     }
 
     void update(float l) override {
-        if (std::fabs(l - _l) < 0.03f) return;
+        if (std::fabs(l - _l) < KIND_OF_SMALL_NUMBER) return;
         _l = l;
         unsigned long x = 0;
 
@@ -132,7 +133,7 @@ public:
     }
 
     void update(float l) override {
-        if (std::fabs(l - _l) < 0.03f) return;
+        if (std::fabs(l - _l) < KIND_OF_SMALL_NUMBER) return;
         _l = l;
         unsigned long x = 0;
 
@@ -191,14 +192,12 @@ public:
     }
 
     void update(float l) override {
-        if (std::fabs(l - _l) < 0.03f) return;
+        if (std::fabs(l - _l) < KIND_OF_SMALL_NUMBER) return;
         _l = l;
 
         for (int i = -125; i < colors_size_x - 125; i++) {
             for (int j = -125; j < colors_size_y - 125; j++) {
                 if (i * i + j * j <= 125 * 125) {
-
-//                    draw_to_color_pixels(125 - i, 125 + j, convert(color1), _pixels, colors_size_x);
                     _pixels[4 * (( j + 125 ) * colors_size_x + 125 - i ) + 2] = static_cast<sf::Uint8>(( 1.0f - _l ) *
                                                                                                        255.0f);
                 }
@@ -250,14 +249,12 @@ public:
     }
 
     void update(float l) override {
-        if (std::fabs(l - _l) < 0.03f) return;
+        if (std::fabs(l - _l) < KIND_OF_SMALL_NUMBER) return;
         _l = l;
 
         for (int i = -125; i < colors_size_x - 125; i++) {
             for (int j = -125; j < colors_size_y - 125; j++) {
                 if (i * i + j * j <= 125 * 125) {
-
-//                    draw_to_color_pixels(125 - i, 125 + j, color1, _pixels, colors_size_x);
                     _pixels[4 * (( j + 125 ) * colors_size_x + 125 - i ) + 2] = static_cast<sf::Uint8>(_l * 255.0f);
                 }
             }
