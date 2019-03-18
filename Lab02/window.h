@@ -68,6 +68,7 @@ public:
 private:
     void processEvents() {
         while (_window.pollEvent(_events)) {
+            if (_events.type == sf::Event::KeyPressed ) if( _events.key.code == sf::Keyboard::Escape) _window.close();
             if (_events.type == sf::Event::Closed) _window.close();
             if (_events.type == sf::Event::MouseMoved) MouseMovedHandle();
             if (_events.type == sf::Event::MouseButtonPressed) MouseButtonPressedHandle();

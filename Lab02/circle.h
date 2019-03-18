@@ -11,7 +11,7 @@
 #include <SFML/Graphics.hpp>
 #include "colors.h"
 
-#define KIND_OF_SMALL_NUMBER 0.03f
+#define KIND_OF_SMALL_NUMBER 0.05f
 
 class Circle {
 public:
