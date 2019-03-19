@@ -21,6 +21,7 @@ public:
             _window(sf::VideoMode(750, 600), "GFK Lab 02", sf::Style::Titlebar | sf::Style::Close) {
 
         _clock.restart().asMilliseconds();
+        _clock2.restart().asMicroseconds();
 
         _menu.setStrings(0.51f);
 
@@ -77,13 +78,15 @@ private:
     void MouseMovedHandle(){
         _mouseX = _events.mouseMove.x;
         _mouseY = _events.mouseMove.y;
+        float velocity = 1.0f / _clock2.getElapsedTime().asSeconds();
+        _clock2.restart();
 
         if ( _mouseButtonHold && _mouseX >= slider_pos_x && _mouseX <= slider_pos_x + size_x){
             if(_mouseY >= slider_pos_y && _mouseY <= slider_pos_y + size_y){
                 float ratio = _slider.new_bar_pos(static_cast<float>(_mouseY));
                 for(auto el : _shapes){
-                    std::async(std::launch::async, [&el, ratio](){
-                        el->update(ratio);
+                    std::async(std::launch::async, [&el, ratio, velocity](){
+                        el->update(ratio, velocity);
                     });
 
                 }
@@ -99,7 +102,7 @@ private:
                 float ratio = _slider.new_bar_pos(static_cast<float>(_mouseY));
                 for(auto el : _shapes){
                     std::async(std::launch::async, [&el, ratio](){
-                        el->update(ratio);
+                        el->update(ratio, 0);
                     });
                 }
                 _menu.setStrings(ratio);
@@ -117,9 +120,7 @@ private:
         }
         _frame_counter++;
 
-//        float frames = 1.0f / _clock.getElapsedTime().asSeconds();
-//        _menu.setFps(static_cast<int>(frames));
-//        _clock.restart();
+
     }
 
 private:
@@ -128,6 +129,7 @@ private:
     sf::Event _events = { };
     Menu _menu = { };
     sf::Clock _clock = { };
+    sf::Clock _clock2 = { };
     unsigned int _FPS = 0;
     unsigned int _frame_counter = 0;
     Slider _slider = {};

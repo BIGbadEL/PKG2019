@@ -11,7 +11,9 @@
 #include "colors.h"
 #include <array>
 
-#define KIND_OF_SMALL_NUMBER 0.05f
+#define KIND_OF_SMALL_NUMBER 0.001f
+#define KIND_OF_SMALL_VELOCITY 150.0f
+#define MULTI 50
 
 class Circle {
 public:
@@ -30,7 +32,7 @@ public:
         return *_circle;
     }
 
-    virtual void update(float l) = 0;
+    virtual void update(float l, float v) = 0;
 
 protected:
     sf::CircleShape* _circle{ };
@@ -73,10 +75,12 @@ public:
         delete[] _pixels;
     }
 
-    void update(float l) override {
+    void update(float l, float v) override {
         if (std::fabs(l - _l) < KIND_OF_SMALL_NUMBER) return;
-        _l = l;
+        if (v > KIND_OF_SMALL_VELOCITY && faf(l - _l) < MULTI * KIND_OF_SMALL_NUMBER) return;
+        if (v > 5 *  KIND_OF_SMALL_VELOCITY && faf(l - _l) < 1.5f * MULTI * KIND_OF_SMALL_NUMBER) return;
         unsigned long x = 0;
+        _l = l;
 
         for (int i = -125; i < colors_size_x - 125; i++) {
             for (int j = -125; j < colors_size_y - 125; j++) {
@@ -135,10 +139,12 @@ public:
         delete[] _pixels;
     }
 
-    void update(float l) override {
+    void update(float l, float v) override {
         if (std::fabs(l - _l) < KIND_OF_SMALL_NUMBER) return;
-        _l = l;
+        if (v > KIND_OF_SMALL_VELOCITY && faf(l - _l) < MULTI * KIND_OF_SMALL_NUMBER) return;
+        if (v > 5 *  KIND_OF_SMALL_VELOCITY && faf(l - _l) < 1.5f * MULTI * KIND_OF_SMALL_NUMBER) return;
         unsigned long x = 0;
+        _l = l;
 
         for (int i = -125; i < colors_size_x - 125; i++) {
             for (int j = -125; j < colors_size_y - 125; j++) {
@@ -193,8 +199,9 @@ public:
         delete[] _pixels;
     }
 
-    void update(float l) override {
+    void update(float l, float v) override {
         if (std::fabs(l - _l) < KIND_OF_SMALL_NUMBER) return;
+        if (v > KIND_OF_SMALL_VELOCITY && faf(l - _l) < MULTI * KIND_OF_SMALL_NUMBER) return;
         _l = l;
 
         for (int i = -125; i < colors_size_x - 125; i++) {
@@ -250,9 +257,11 @@ public:
         delete[] _pixels;
     }
 
-    void update(float l) override {
+    void update(float l, float v) override {
         if (std::fabs(l - _l) < KIND_OF_SMALL_NUMBER) return;
+        if (v > KIND_OF_SMALL_VELOCITY && faf(l - _l) < MULTI * KIND_OF_SMALL_NUMBER) return;
         _l = l;
+
 
         for (int i = -125; i < colors_size_x - 125; i++) {
             for (int j = -125; j < colors_size_y - 125; j++) {
