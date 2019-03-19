@@ -60,8 +60,6 @@ public:
         _window.draw(_menu);
         _window.display();
 
-
-
         processTime();
     }
 
