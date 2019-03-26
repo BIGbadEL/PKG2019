@@ -16,6 +16,10 @@ public:
         return true;
     }
 
+    ~App() {
+        delete _frame;
+    }
+
 private:
     Frame* _frame;
 };

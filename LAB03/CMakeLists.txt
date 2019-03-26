@@ -3,6 +3,8 @@ project(LAB03)
 
 set(CMAKE_CXX_STANDARD 17)
 
+add_compile_options(-Ofast)
+
 add_executable(LAB03 main.cpp app.h frame.h)
 
 add_definitions(-D_FILE_OFFSET_BITS=64 -DWXUSINGDLL -D__WXGTK__)
