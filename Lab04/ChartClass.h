@@ -15,12 +15,13 @@ private:
     double GetFunctionValue(double x); // zwraca wartosci rysowanej funkcji
     Matrix* trans;
 
-    void line2d(Matrix t, double* x1, double* y1, double* x2, double* y2);
     // powyzej sugerowana funkcja transformujaca odcinki (jesli ktos ma
     // inny pomysl mozna ja usunac)
 
 public:
     explicit ChartClass(std::shared_ptr<ConfigClass> c);
+
+    ~ChartClass();
 
     void Set_Range();   // ustala wartosci zmiennych x_min,y_min,x_max,y_max
     double Get_Y_min(); // zwraca y_min

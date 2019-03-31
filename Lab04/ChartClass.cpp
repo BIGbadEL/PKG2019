@@ -15,6 +15,10 @@ ChartClass::ChartClass(std::shared_ptr<ConfigClass> c) {
     trans = new Matrix;
 }
 
+ChartClass::~ChartClass() {
+    delete trans;
+}
+
 void ChartClass::Set_Range() {
     double ymin = 9999.9, ymax = -9999.9;
     double x, y, step;
@@ -81,6 +85,26 @@ void ChartClass::Draw(wxDC* dc, int w, int h) {
     wxPoint EndX = TranslatePoint(x_max, 0, *trans);
     dc->DrawLine(beginX, EndX);
 
+    wxPoint start = TranslatePoint(x_min / 2, 0.1, *trans);
+    wxPoint stop = TranslatePoint(x_min / 2, -0.1, *trans);
+    dc->DrawLine(start, stop);
+    start = TranslatePoint(x_min / 2 - 0.1, 0.1 + 0.01, *trans);
+    dc->DrawRotatedText(wxString(std::to_string(x_min / 2)), start, cfg->Get_Alpha());
+
+    start = TranslatePoint(x_max / 3, 0.1, *trans);
+    stop = TranslatePoint(x_max / 3, -0.1, *trans);
+    dc->DrawLine(start, stop);
+
+    start = TranslatePoint(x_max / 3 - 0.1, 0.1 + 0.01, *trans);
+    dc->DrawRotatedText(wxString(std::to_string(x_max / 3)), start, cfg->Get_Alpha());
+
+    start = TranslatePoint(2.0 * x_max / 3, 0.1, *trans);
+    stop = TranslatePoint(2.0 * x_max / 3, -0.1, *trans);
+    dc->DrawLine(start, stop);
+
+    start = TranslatePoint(2.0 * x_max / 3 - 0.1, 0.1 + 0.01, *trans);
+    dc->DrawRotatedText(wxString(std::to_string(2.0 * x_max / 3)), start, cfg->Get_Alpha());
+
     //arrowX
 
     wxPoint arrowB = TranslatePoint(x_max - 0.1, 0.1, *trans);
@@ -88,16 +112,30 @@ void ChartClass::Draw(wxDC* dc, int w, int h) {
     arrowB = TranslatePoint(x_max - 0.1, -0.1, *trans);
     dc->DrawLine(arrowB, EndX);
 
+
+
     //axis Y
-    wxPoint beginY(0, static_cast<int>(-y_max)), EndY(0, static_cast<int>(-y_min));
-    TranslatePoint(beginY, *trans);
-    TranslatePoint(EndY, *trans);
+    wxPoint beginY = TranslatePoint(0, -y_max, *trans);
+    wxPoint EndY = TranslatePoint(0, -y_min, *trans);
     dc->DrawLine(beginY, EndY);
 
+    start = TranslatePoint(0.05, -y_max / 3.0, *trans);
+    stop = TranslatePoint(-0.05, -y_max / 3.0, *trans);
+    dc->DrawLine(start, stop);
+    start = TranslatePoint(0.05 + 0.05, -y_max / 3.0 + 0.05, *trans);
+    dc->DrawRotatedText(wxString(std::to_string(y_max / 3.0)), start, cfg->Get_Alpha());
+
+
+    start = TranslatePoint(0.05, ( 2.0 * y_max ) / -3.0, *trans);
+    stop = TranslatePoint(-0.05, ( 2.0 * y_max ) / -3.0, *trans);
+    dc->DrawLine(start, stop);
+    start = TranslatePoint(0.05 + 0.05, ( 2.0 * y_max / -3.0 ) + 0.05, *trans);
+    dc->DrawRotatedText(wxString(std::to_string(2.0 * y_max / 3.0)), start, cfg->Get_Alpha());
+
     //arrowY
-    arrowB = TranslatePoint(0.05, -y_max + 1.1, *trans);
+    arrowB = TranslatePoint(0.05, -y_max + 0.1, *trans);
     dc->DrawLine(arrowB, beginY);
-    arrowB = TranslatePoint(-0.05, -y_max + 1.1, *trans);
+    arrowB = TranslatePoint(-0.05, -y_max + 0.1, *trans);
     dc->DrawLine(arrowB, beginY);
 
 
@@ -115,10 +153,6 @@ void ChartClass::Draw(wxDC* dc, int w, int h) {
     delete warden;
 }
 
-void ChartClass::line2d(Matrix t, double* x1, double* y1, double* x2, double* y2) {
-
-}
-
 double ChartClass::Get_Y_min() {
     Set_Range();
     return y_min;
@@ -133,38 +167,60 @@ double toRadians(double angle) {
     return -M_PI * angle / 180.0;
 }
 
+void makeIdentity(Matrix& mat) {
+    mat.data[0][0] = 1.0;
+    mat.data[1][1] = 1.0;
+    mat.data[2][2] = 1.0;
+}
+
 void ChartClass::SetTransformationMat(double w, double h) {
     Matrix temp1; //macierz translacji
-
+    makeIdentity(temp1);
     temp1.data[0][2] = cfg->Get_dX();
     temp1.data[1][2] = cfg->Get_dY();
 
     Matrix temp4; //macierz translacji
-
+    Matrix temp5;
+    makeIdentity(temp4);
+    makeIdentity(temp5);
     temp4.data[0][2] = w / 2.0;
     temp4.data[1][2] = h / 2.0;
 
-
     Matrix temp2; //macierz obrotu
+    makeIdentity(temp2);
     temp2.data[0][0] = std::cos(toRadians(cfg->Get_Alpha()));
     temp2.data[1][1] = temp2.data[0][0];
     temp2.data[0][1] = -std::sin(toRadians(cfg->Get_Alpha()));
     temp2.data[1][0] = -temp2.data[0][1];
 
-    temp2 = temp4 * temp2;
+    if (!cfg->RotateScreenCenter()) {
+        temp5.data[0][2] = -cfg->Get_dX();
+        temp5.data[1][2] = -cfg->Get_dY();
+    }
+
+    temp2 = temp5 * temp4 * temp2;
 
     temp4.data[0][2] = -temp4.data[0][2];
     temp4.data[1][2] = -temp4.data[1][2];
 
-    temp2 = temp2 * temp4;
+    temp5.data[0][2] = -temp5.data[0][2];
+    temp5.data[1][2] = -temp5.data[1][2];
+
+
+    temp2 = temp2 * temp4 * temp5;
 
     Matrix temp3; //macierz transformacji do wsp ekranu
+    makeIdentity(temp3);
     double Sx = w / ( cfg->Get_x1() - cfg->Get_x0());
-    double Sy = h / ( cfg->Get_y1() - cfg->Get_y0());
+    double Sy = h / -( cfg->Get_y1() - cfg->Get_y0());
     temp3.data[0][0] = Sx;
     temp3.data[1][1] = Sy;
     temp3.data[0][2] = 10 - Sx * cfg->Get_x0();
-    temp3.data[1][2] = -10 - Sy * cfg->Get_y0();
+    temp3.data[1][2] = -10 + Sy * cfg->Get_y0();
 
-    *trans = temp1 * temp2 * temp3;
+    Matrix temp6;
+    makeIdentity(temp6);
+    temp6.data[1][1] = -1.0;
+
+    *trans = temp1 * temp2 * temp3 * temp6;
 }

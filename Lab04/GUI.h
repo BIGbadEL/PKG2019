@@ -111,9 +111,9 @@ public:
     wxStaticText* WxStaticText_alpha;
     wxStaticText* m_staticText11;
 
-    explicit MyFrame1(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("GFK Lab 03"),
-                      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800, 600),
-                      long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
+    MyFrame1(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("GFK Lab 03"),
+             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800, 600),
+             long style = wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL);
 
     ~MyFrame1();
 

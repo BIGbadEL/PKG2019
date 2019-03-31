@@ -175,7 +175,7 @@ MyFrame1::MyFrame1(wxWindow* parent, wxWindowID id, const wxString& title, const
     wxString WxChoiceChoices[] = {_("x+sin(4x)"), _("x^2"), _("0.5*e^(4x-3x^2)")};
     int WxChoiceNChoices = sizeof(WxChoiceChoices) / sizeof(wxString);
     WxChoice = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, WxChoiceNChoices, WxChoiceChoices, 0);
-    WxChoice->SetSelection(1);
+    WxChoice->SetSelection(0);
     bSizer2->Add(WxChoice, 0, wxALIGN_CENTER | wxALL, 5);
 
     m_button1 = new wxButton(this, wxID_ANY, _("Do ukladu swiata"), wxDefaultPosition, wxDefaultSize, 0);
@@ -204,99 +204,83 @@ MyFrame1::MyFrame1(wxWindow* parent, wxWindowID id, const wxString& title, const
 
     // Connect Events
     this->Connect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MyFrame1::MainFormClose));
-    WxPanel->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MyFrame1::WxPanel_Repaint), nullptr, this);
-    WxEdit_x0->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x0_Update), nullptr, this);
-    WxEdit_y0->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_y0_Update), nullptr, this);
-    WxEdit_x1->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x1_Update), nullptr, this);
-    WxEdit_y1->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_y1_Update), nullptr, this);
-    WxScrollBar_alpha->Connect(wxEVT_SCROLL_TOP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), nullptr,
+    WxPanel->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MyFrame1::WxPanel_Repaint), NULL, this);
+    WxEdit_x0->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x0_Update), NULL, this);
+    WxEdit_y0->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_y0_Update), NULL, this);
+    WxEdit_x1->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x1_Update), NULL, this);
+    WxEdit_y1->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_y1_Update), NULL, this);
+    WxScrollBar_alpha->Connect(wxEVT_SCROLL_TOP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL, this);
+    WxScrollBar_alpha->Connect(wxEVT_SCROLL_BOTTOM, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                this);
-    WxScrollBar_alpha->Connect(wxEVT_SCROLL_BOTTOM, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), nullptr,
+    WxScrollBar_alpha->Connect(wxEVT_SCROLL_LINEUP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                this);
-    WxScrollBar_alpha->Connect(wxEVT_SCROLL_LINEUP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), nullptr,
+    WxScrollBar_alpha->Connect(wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                this);
-    WxScrollBar_alpha->Connect(wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), nullptr,
+    WxScrollBar_alpha->Connect(wxEVT_SCROLL_PAGEUP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                this);
-    WxScrollBar_alpha->Connect(wxEVT_SCROLL_PAGEUP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), nullptr,
+    WxScrollBar_alpha->Connect(wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                this);
-    WxScrollBar_alpha->Connect(wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), nullptr,
-                               this);
-    WxScrollBar_alpha->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                               nullptr,
+    WxScrollBar_alpha->Connect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                this);
     WxScrollBar_alpha->Connect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                               nullptr, this);
-    WxScrollBar_alpha->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), nullptr,
+                               NULL, this);
+    WxScrollBar_alpha->Connect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                this);
-    WxRB_Middle->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(MyFrame1::WxRB_Middle_Click),
-                         nullptr,
+    WxRB_Middle->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(MyFrame1::WxRB_Middle_Click), NULL,
                          this);
-    WxRB_Center->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(MyFrame1::WxRB_Center_Click),
-                         nullptr,
+    WxRB_Center->Connect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(MyFrame1::WxRB_Center_Click), NULL,
                          this);
-    WxEdit_dX->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_dX_Update), nullptr, this);
-    WxEdit_dY->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_dY_Update), nullptr, this);
-    WxEdit_x_start->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x_start_Update), nullptr,
+    WxEdit_dX->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_dX_Update), NULL, this);
+    WxEdit_dY->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_dY_Update), NULL, this);
+    WxEdit_x_start->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x_start_Update), NULL,
                             this);
-    WxEdit_x_stop->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x_stop_Update), nullptr,
+    WxEdit_x_stop->Connect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x_stop_Update), NULL,
                            this);
-    WxChoice->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MyFrame1::WxChoice_Selected), nullptr, this);
-    m_button1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button1_click), nullptr, this);
-    m_button2->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button2_click), nullptr, this);
-    m_button3->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button3_click), nullptr, this);
+    WxChoice->Connect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MyFrame1::WxChoice_Selected), NULL, this);
+    m_button1->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button1_click), NULL, this);
+    m_button2->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button2_click), NULL, this);
+    m_button3->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button3_click), NULL, this);
 }
 
 MyFrame1::~MyFrame1() {
     // Disconnect Events
     this->Disconnect(wxEVT_CLOSE_WINDOW, wxCloseEventHandler(MyFrame1::MainFormClose));
-    WxPanel->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MyFrame1::WxPanel_Repaint), nullptr, this);
-    WxEdit_x0->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x0_Update), nullptr, this);
-    WxEdit_y0->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_y0_Update), nullptr, this);
-    WxEdit_x1->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x1_Update), nullptr, this);
-    WxEdit_y1->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_y1_Update), nullptr, this);
-    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_TOP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), nullptr,
+    WxPanel->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(MyFrame1::WxPanel_Repaint), NULL, this);
+    WxEdit_x0->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x0_Update), NULL, this);
+    WxEdit_y0->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_y0_Update), NULL, this);
+    WxEdit_x1->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x1_Update), NULL, this);
+    WxEdit_y1->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_y1_Update), NULL, this);
+    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_TOP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                   this);
-    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_BOTTOM, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                                  nullptr,
+    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_BOTTOM, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                   this);
-    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_LINEUP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                                  nullptr,
+    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_LINEUP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                   this);
-    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                                  nullptr,
+    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                   this);
-    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_PAGEUP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                                  nullptr,
+    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_PAGEUP, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                   this);
-    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                                  nullptr,
+    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                   this);
     WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                                  nullptr, this);
+                                  NULL, this);
     WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                                  nullptr, this);
-    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update),
-                                  nullptr,
+                                  NULL, this);
+    WxScrollBar_alpha->Disconnect(wxEVT_SCROLL_CHANGED, wxScrollEventHandler(MyFrame1::WxScrollBar_alpha_Update), NULL,
                                   this);
     WxRB_Middle->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(MyFrame1::WxRB_Middle_Click),
-                            nullptr, this);
+                            NULL, this);
     WxRB_Center->Disconnect(wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler(MyFrame1::WxRB_Center_Click),
-                            nullptr, this);
-    WxEdit_dX->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_dX_Update), nullptr, this);
-    WxEdit_dY->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_dY_Update), nullptr, this);
-    WxEdit_x_start->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x_start_Update),
-                               nullptr,
+                            NULL, this);
+    WxEdit_dX->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_dX_Update), NULL, this);
+    WxEdit_dY->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_dY_Update), NULL, this);
+    WxEdit_x_start->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x_start_Update), NULL,
                                this);
-    WxEdit_x_stop->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x_stop_Update),
-                              nullptr,
+    WxEdit_x_stop->Disconnect(wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler(MyFrame1::WxEdit_x_stop_Update), NULL,
                               this);
-    WxChoice->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MyFrame1::WxChoice_Selected), nullptr,
-                         this);
-    m_button1->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button1_click), nullptr,
-                          this);
-    m_button2->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button2_click), nullptr,
-                          this);
-    m_button3->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button3_click), nullptr,
-                          this);
+    WxChoice->Disconnect(wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler(MyFrame1::WxChoice_Selected), NULL, this);
+    m_button1->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button1_click), NULL, this);
+    m_button2->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button2_click), NULL, this);
+    m_button3->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(MyFrame1::m_button3_click), NULL, this);
 
 }
