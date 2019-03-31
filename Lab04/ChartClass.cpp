@@ -4,7 +4,7 @@
 #include "ChartClass.h"
 #include "vecmat.h"
 
-ChartClass::ChartClass(std::shared_ptr<ConfigClass> c) {
+ChartClass::ChartClass(std::shared_ptr<ConfigClass> c, GUIMyFrame1* win) {
     x_min = 9999.9;
     x_max = -9999.9;
     y_min = 9999.9;
@@ -13,6 +13,7 @@ ChartClass::ChartClass(std::shared_ptr<ConfigClass> c) {
     x_step = 200;
     Set_Range();
     trans = new Matrix;
+    MainWindow = win;
 }
 
 ChartClass::~ChartClass() {
@@ -57,6 +58,18 @@ void TranslatePoint(wxPoint& point, const Matrix& mat) {
     point.y = static_cast<int>(vec.GetY());
 }
 
+struct myPoint {
+    double x = 0.0;
+    double y = 0.0;
+};
+
+void TranslatePoint(myPoint& p, const Matrix& mat) {
+    Vector vec(p.x, p.y);
+    vec = mat * vec;
+    p.x = vec.GetX();
+    p.y = vec.GetY();
+}
+
 wxPoint TranslatePoint(double x, double y, const Matrix& mat) {
     Vector vec(x, y);
     vec = mat * vec;
@@ -64,6 +77,10 @@ wxPoint TranslatePoint(double x, double y, const Matrix& mat) {
     y = vec.GetY();
 
     return wxPoint(static_cast<int>(x), static_cast<int>(y));
+}
+
+float rand(double var) {
+    return static_cast<int>(var * 1000 + 0.5f) / 1000.0f;
 }
 
 void ChartClass::Draw(wxDC* dc, int w, int h) {
@@ -76,7 +93,7 @@ void ChartClass::Draw(wxDC* dc, int w, int h) {
 
     SetTransformationMat(w, h);
 
-    dc->DrawText("Tu trzeba narysowac wykres", wxPoint(20, 20));
+
 
     auto warden = new wxDCClipper(*dc, 10, 10, w - 20, h - 20);
 
@@ -88,14 +105,14 @@ void ChartClass::Draw(wxDC* dc, int w, int h) {
     wxPoint start = TranslatePoint(x_min / 2, 0.1, *trans);
     wxPoint stop = TranslatePoint(x_min / 2, -0.1, *trans);
     dc->DrawLine(start, stop);
-    start = TranslatePoint(x_min / 2 - 0.1, 0.1 + 0.01, *trans);
+    start = TranslatePoint(x_min / 2 - 0.1, -0.1, *trans);
     dc->DrawRotatedText(wxString(std::to_string(x_min / 2)), start, cfg->Get_Alpha());
 
     start = TranslatePoint(x_max / 3, 0.1, *trans);
     stop = TranslatePoint(x_max / 3, -0.1, *trans);
     dc->DrawLine(start, stop);
 
-    start = TranslatePoint(x_max / 3 - 0.1, 0.1 + 0.01, *trans);
+    start = TranslatePoint(x_max / 3 - 0.1, -0.1, *trans);
     dc->DrawRotatedText(wxString(std::to_string(x_max / 3)), start, cfg->Get_Alpha());
 
     start = TranslatePoint(2.0 * x_max / 3, 0.1, *trans);
@@ -115,42 +132,52 @@ void ChartClass::Draw(wxDC* dc, int w, int h) {
 
 
     //axis Y
-    wxPoint beginY = TranslatePoint(0, -y_max, *trans);
-    wxPoint EndY = TranslatePoint(0, -y_min, *trans);
+    wxPoint beginY = TranslatePoint(0, y_max, *trans);
+    wxPoint EndY = TranslatePoint(0, y_min, *trans);
     dc->DrawLine(beginY, EndY);
 
-    start = TranslatePoint(0.05, -y_max / 3.0, *trans);
-    stop = TranslatePoint(-0.05, -y_max / 3.0, *trans);
+    start = TranslatePoint(0.05, y_max / 3.0, *trans);
+    stop = TranslatePoint(-0.05, y_max / 3.0, *trans);
     dc->DrawLine(start, stop);
-    start = TranslatePoint(0.05 + 0.05, -y_max / 3.0 + 0.05, *trans);
+    start = TranslatePoint(0.05 + 0.05, y_max / 3.0 + 0.05, *trans);
     dc->DrawRotatedText(wxString(std::to_string(y_max / 3.0)), start, cfg->Get_Alpha());
 
 
-    start = TranslatePoint(0.05, ( 2.0 * y_max ) / -3.0, *trans);
-    stop = TranslatePoint(-0.05, ( 2.0 * y_max ) / -3.0, *trans);
+    start = TranslatePoint(0.05, ( 2.0 * y_max ) / 3.0, *trans);
+    stop = TranslatePoint(-0.05, ( 2.0 * y_max ) / 3.0, *trans);
     dc->DrawLine(start, stop);
-    start = TranslatePoint(0.05 + 0.05, ( 2.0 * y_max / -3.0 ) + 0.05, *trans);
+    start = TranslatePoint(0.05 + 0.05, ( 2.0 * y_max / 3.0 ) + 0.05, *trans);
     dc->DrawRotatedText(wxString(std::to_string(2.0 * y_max / 3.0)), start, cfg->Get_Alpha());
 
     //arrowY
-    arrowB = TranslatePoint(0.05, -y_max + 0.1, *trans);
+    arrowB = TranslatePoint(0.05, y_max - 0.1, *trans);
     dc->DrawLine(arrowB, beginY);
-    arrowB = TranslatePoint(-0.05, -y_max + 0.1, *trans);
+    arrowB = TranslatePoint(-0.05, y_max - 0.1, *trans);
     dc->DrawLine(arrowB, beginY);
 
 
     dc->SetPen(*wxGREEN_PEN);
     double step = std::abs(x_max - x_min) / x_step;
     double y = GetFunctionValue(x_min);
-    wxPoint P1 = TranslatePoint(x_min, -y, *trans);
+    wxPoint P1 = TranslatePoint(x_min, y, *trans);
     for (double iter = x_min + step; iter <= x_max; iter += step) {
-        wxPoint P2 = TranslatePoint(iter, -GetFunctionValue(iter), *trans);
+        wxPoint P2 = TranslatePoint(iter, GetFunctionValue(iter), *trans);
         dc->DrawLine(P1, P2);
         P1 = P2;
     }
 
 
     delete warden;
+
+    wxPoint mouseScreen = wxGetMousePosition();
+    wxPoint mouse(mouseScreen.x - MainWindow->GetScreenPosition().x, mouseScreen.y - MainWindow->GetScreenPosition().y);
+    trans->Inverse();
+    myPoint finalMouse;
+    finalMouse.x = mouse.x - 7;
+    finalMouse.y = mouse.y - 40;
+    TranslatePoint(finalMouse, *trans);
+    dc->DrawText(wxString(std::to_string(rand(finalMouse.x)) + " x " + std::to_string(rand(finalMouse.y))),
+                 wxPoint(20, 20));
 }
 
 double ChartClass::Get_Y_min() {
@@ -216,11 +243,11 @@ void ChartClass::SetTransformationMat(double w, double h) {
     temp3.data[0][0] = Sx;
     temp3.data[1][1] = Sy;
     temp3.data[0][2] = 10 - Sx * cfg->Get_x0();
-    temp3.data[1][2] = -10 + Sy * cfg->Get_y0();
+    temp3.data[1][2] = 10 - Sy * cfg->Get_y1();
 
     Matrix temp6;
     makeIdentity(temp6);
-    temp6.data[1][1] = -1.0;
+//    temp6.data[1][1] = -1.0;
 
     *trans = temp1 * temp2 * temp3 * temp6;
 }

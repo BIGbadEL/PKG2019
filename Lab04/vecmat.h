@@ -28,6 +28,29 @@ public:
 
     Matrix operator*(const Matrix&);
 
+    void Inverse() {
+        double determinant = 0;
+        for (int i = 0; i < 3; i++)
+            determinant = determinant + ( data[0][i] * ( data[1][( i + 1 ) % 3] * data[2][( i + 2 ) % 3] -
+                                                         data[1][( i + 2 ) % 3] * data[2][( i + 1 ) % 3] ));
+
+        double temp[3][3];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                temp[i][j] = data[i][j];
+            }
+        }
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++)
+                data[i][j] = (( temp[( j + 1 ) % 3][( i + 1 ) % 3] * temp[( j + 2 ) % 3][( i + 2 ) % 3] ) -
+                              ( temp[( j + 1 ) % 3][( i + 2 ) % 3] * temp[( j + 2 ) % 3][( i + 1 ) % 3] )) /
+                             determinant;
+
+
+        }
+    }
+
     friend Vector operator*(const Matrix&, const Vector&);
 };
 

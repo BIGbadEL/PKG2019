@@ -14,8 +14,8 @@ GUIMyFrame1::GUIMyFrame1(wxWindow* parent)
     WxRB_Center->SetLabel(_("\u015Arodek uk\u0142adu"));
     m_button1->SetLabel(_("Do uk\u0142adu \u015Bwiata"));
     cfg = std::make_shared<ConfigClass>(this);
-    Ly_min->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg).Get_Y_min()));
-    Ly_max->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg).Get_Y_max()));
+    Ly_min->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg, this).Get_Y_min()));
+    Ly_max->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg, this).Get_Y_max()));
 }
 
 void GUIMyFrame1::MainFormClose(wxCloseEvent& event) {
@@ -94,8 +94,8 @@ void GUIMyFrame1::WxEdit_x_start_Update(wxCommandEvent& event) {
     double v;
     if (WxEdit_x_start->GetValue().ToDouble(&v)) {
         cfg->Set_x_start(v);
-        Ly_min->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg).Get_Y_min()));
-        Ly_max->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg).Get_Y_max()));
+        Ly_min->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg, this).Get_Y_min()));
+        Ly_max->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg, this).Get_Y_max()));
         Layout();
         Repaint();
     } else wxBell();
@@ -105,8 +105,8 @@ void GUIMyFrame1::WxEdit_x_stop_Update(wxCommandEvent& event) {
     double v;
     if (WxEdit_x_stop->GetValue().ToDouble(&v)) {
         cfg->Set_x_stop(v);
-        Ly_min->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg).Get_Y_min()));
-        Ly_max->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg).Get_Y_max()));
+        Ly_min->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg, this).Get_Y_min()));
+        Ly_max->SetLabel(wxString::Format(wxT("%2.4lf"), ChartClass(cfg, this).Get_Y_max()));
         Layout();
         Repaint();
     } else wxBell();
@@ -141,7 +141,7 @@ void GUIMyFrame1::Repaint() {
     wxClientDC dc1(WxPanel);
     wxBufferedDC dc(&dc1);
 
-    ChartClass MyChart(cfg);
+    ChartClass MyChart(cfg, this);
     int w, h;
     WxPanel->GetSize(&w, &h);
     MyChart.Draw(&dc, w, h);

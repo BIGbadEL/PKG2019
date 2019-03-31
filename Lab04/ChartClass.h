@@ -14,12 +14,13 @@ private:
     double y_min, y_max; // zakres wartosci przyjmowanych przez funkcje
     double GetFunctionValue(double x); // zwraca wartosci rysowanej funkcji
     Matrix* trans;
+    GUIMyFrame1* MainWindow;
 
     // powyzej sugerowana funkcja transformujaca odcinki (jesli ktos ma
     // inny pomysl mozna ja usunac)
 
 public:
-    explicit ChartClass(std::shared_ptr<ConfigClass> c);
+    explicit ChartClass(std::shared_ptr<ConfigClass> c, GUIMyFrame1* win);
 
     ~ChartClass();
 
