@@ -245,9 +245,5 @@ void ChartClass::SetTransformationMat(double w, double h) {
     temp3.data[0][2] = 10 - Sx * cfg->Get_x0();
     temp3.data[1][2] = 10 - Sy * cfg->Get_y1();
 
-    Matrix temp6;
-    makeIdentity(temp6);
-//    temp6.data[1][1] = -1.0;
-
-    *trans = temp1 * temp2 * temp3 * temp6;
+    *trans = temp1 * temp2 * temp3;
 }
