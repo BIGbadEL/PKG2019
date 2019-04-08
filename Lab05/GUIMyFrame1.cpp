@@ -194,8 +194,8 @@ void GUIMyFrame1::Repaint()
         update(end);
         begin = makePer() * begin;
         end = makePer() * end;
-
-        dc.DrawLine(begin.GetX() * width, begin.GetY() * height, end.GetX() * width, end.GetY() * height);
+        if(begin.GetZ() > 0.025 && end.GetZ() > 0.025)
+            dc.DrawLine(begin.GetX() * width, begin.GetY() * height, end.GetX() * width, end.GetY() * height);
     }
 
 // tu rysowac
