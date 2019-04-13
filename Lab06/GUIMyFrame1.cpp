@@ -3,6 +3,8 @@
 #include <wx/rawbmp.h>
 #include <wx/image.h>
 
+#define KIND_OF_SMALL_NUMBER 2
+
 GUIMyFrame1::GUIMyFrame1(wxWindow* parent)
         :
         MyFrame1(parent) {
@@ -84,16 +86,81 @@ void GUIMyFrame1::m_s_contrast_scroll(wxScrollEvent& event) {
     Repaint();
 }
 
+constexpr double weight[3][3] = {
+    { -1, 0, 1},
+    { -1, 0, 1},
+    { -1, 0, 1}
+};
+
 void GUIMyFrame1::m_b_prewitt_click(wxCommandEvent& event) {
+    int size = Img_Org.GetHeight() * Img_Org.GetWidth() * 3;
+    unsigned char* data = Img_Org.GetData();
+    unsigned char* new_data = Img_Cpy.GetData();
+    int width = Img_Org.GetWidth();
+    data += width + 1;
+    new_data += width + 1;
+    for(int i = 0; i < size - (width - 1) * 3; i++){
+        if( i % width != 0 && i % width != width - 1) {
+            int index1 = ( -width - 1) * 3;
+            int index2 = index1 + 3;
+            int index3 = index2 + 3;
+            int index5 = 0;
+            int index4 = index5 - 3;
+            int index6 = index5 + 3;
+            int index7 = ( width - 1) * 3;
+            int index8 = index7 + 3;
+            int index9 = index8 + 3;
+            double s = weight[0][0] * data[index1] + weight[0][1] * data[index2] + weight[0][2] * data[index3]
+                       + weight[1][0] * data[index4] + weight[1][1] * data[index5] + weight[1][2] * data[index6]
+                       + weight[2][0] * data[index7] + weight[2][1] * data[index8] + weight[2][2] * data[index9];
+            s = sqrt(s * s + s * s) / 3;
+            new_data[0] = static_cast<unsigned char> (s > 255 ? 255 : s);
+        } else {
+            new_data[0] = 0;
+        }
+        new_data += 1;
+        data += 1;
+    }
+
+
     // TO DO: Pionowa maska Prewitta
 }
 
 void GUIMyFrame1::m_b_threshold_click(wxCommandEvent& event) {
+    int size = Img_Org.GetHeight() * Img_Org.GetWidth();
+    unsigned char* data = Img_Org.GetData();
+    unsigned char* new_data = Img_Cpy.GetData();
+    for(int i = 0; i < size; i++){
+        new_data[0] = data[0] < 128 ? 0 : 255;
+        new_data[1] = data[1] < 128 ? 0 : 255;
+        new_data[2] = data[2] < 128 ? 0 : 255;
+        new_data += 3;
+        data += 3;
+    }
     // TO DO: Prog o wartosci 128 dla kazdego kanalu niezaleznie
 }
 
 
 void GUIMyFrame1::Contrast(int value) {
+    static int prev_contrast = value;
+    double factor = value < 0 ? value / 100.0 + 1.0 : value /  10.0 ;
+
+    if (abs(prev_contrast - value) > KIND_OF_SMALL_NUMBER) {
+        int size = Img_Org.GetHeight() * Img_Org.GetWidth();
+        unsigned char* data = Img_Org.GetData();
+        unsigned char* new_data = Img_Cpy.GetData();
+        for(int i = 0; i < size; i++){
+            double r = (data[0] - 127) * factor + 127;
+            new_data[0] = static_cast<unsigned char> (r < 0 ? 0 : (r > 255 ? 255 : r));
+            r = (data[1] - 127) * factor + 127;
+            new_data[1] = static_cast<unsigned char> (r < 0 ? 0 : (r > 255 ? 255 : r));
+            r = (data[2] - 127) * factor + 127;
+            new_data[2] = static_cast<unsigned char> (r < 0 ? 0 : (r > 255 ? 255 : r));
+            new_data += 3;
+            data += 3;
+        }
+        prev_contrast = value;
+    }
     // TO DO: Zmiana kontrastu obrazu. value moze przyjmowac wartosci od -100 do 100
 }
 
@@ -104,52 +171,43 @@ void GUIMyFrame1::Repaint() {
     dc.DrawBitmap(bitmap, 0, 0, true); // Rysujemy bitmape na kontekscie urzadzenia
 }
 
-class HSL{
-public:
-    double h;
-    double s;
-    double l;
-};
-
-constexpr double min(double one, double second){
-    if (one > second){
-        return one;
-    }else {
-        return second;
-    }
-}
-
-HSL HSVtoHSL(const wxImage::HSVValue& hsv){
-    HSL hsl;
-    hsl.h = hsv.hue;
-    hsl.l = hsv.value - hsv.value * hsv.saturation / 2;
-    hsl.s = (hsl.l == 0 || hsl.l == 1) ? 0 : (hsv.value - hsl.l) / min(hsl.l, 1 - hsl.l);
-    return hsl;
-}
-
-wxImage::HSVValue HSLtoHSV(const HSL& hsl){
-    wxImage::HSVValue hsv;
-    hsv.hue = hsl.h;
-    hsv.value = hsl.l + hsl.s * min(hsl.l , 1 - hsl.l);
-    hsv.saturation = ( hsv.value == 0 ) ? 0 : (2 - 2 * hsl.l / hsv.value);
-    return hsv;
-}
 
 void GUIMyFrame1::Brightness(int value) {
-    wxImagePixelData data(Img_Org);
-    wxImagePixelData::Iterator pixel(data);
-    pixel.Offset(data, 100, 100);
-    for(int x = 0; x < 100; x++){
-        for(int y = 0; y < 100; y++, pixel++){
-            wxImage::RGBValue rgb(pixel.Red(), pixel.Green(), pixel.Blue());
-            wxImage::HSVValue hsv = wxImage::RGBtoHSV(rgb);
-            HSL hsl = HSVtoHSL(hsv);
-            double v = value / 200.;
-            hsl.l = hsl.l + v;
-            hsv = HSLtoHSV(hsl);
-            rgb = wxImage::HSVtoRGB(hsv);
-            Img_Cpy.SetRGB(x, y, rgb.red, rgb.green, rgb.blue);
+    static int prev_val = value;
+//    Img_Cpy = Img_Org.Copy();
+    if (KIND_OF_SMALL_NUMBER < std::abs(prev_val - value)) {
+        wxColor fadeto = wxColor(255, 255, 255);
+
+        auto fade_factor = value; //static_cast<unsigned int>(( value + 100 ) / 200. * 255);
+
+        int fade_r = fadeto.Red() * fade_factor;
+        int fade_g = fadeto.Green() * fade_factor;
+        int fade_b = fadeto.Blue() * fade_factor;
+        int fade_complement = 255 - abs(fade_factor);
+
+        unsigned int pixelcount = Img_Org.GetHeight() * Img_Org.GetWidth();
+        unsigned char* data = Img_Org.GetData();
+        unsigned char* data_out = Img_Cpy.GetData();
+        if (value > 0) {
+            for (unsigned int i = 0; i < pixelcount; i++) {
+                data_out[0] = static_cast<int>( data[0] * fade_complement + fade_r ) >> 8;
+                data_out[1] = static_cast<int>( data[1] * fade_complement + fade_g ) >> 8;
+                data_out[2] = static_cast<int>( data[2] * fade_complement + fade_b ) >> 8;
+                data += 3;
+                data_out += 3;
+            }
+        } else {
+            for (unsigned int i = 0; i < pixelcount; i++) {
+                data_out[0] = data[0] + value < 0 ? 0 : abs(data[0] + value);
+                data_out[1] = data[1] + value < 0 ? 0 : abs(data[1] + value);
+                data_out[2] = data[2] + value < 0 ? 0 : abs(data[2] + value);
+//                std::cout << (( data[0] * fade_complement + fade_r ) >> 8) << " x " <<  (( data[1] * fade_complement + fade_r ) >> 8) << " x " <<  (( data[2] * fade_complement + fade_r ) >> 8) << "\n";
+                data += 3;
+                data_out += 3;
+            }
         }
+        prev_val = value;
     }
-    // TO DO: Zmiana jasnosci obrazu. value moze przyjmowac wartosci od -100 do 100
 }
+
+
