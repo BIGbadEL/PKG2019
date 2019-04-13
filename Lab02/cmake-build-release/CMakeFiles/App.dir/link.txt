@@ -1,0 +1,1 @@
+/usr/bin/g++  -O3 -DNDEBUG   CMakeFiles/App.dir/lab02.cpp.o  -o App -lsfml-graphics -lsfml-window -lsfml-system -lpthread 

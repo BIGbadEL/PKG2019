@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/grzegorz/Dokumenty/Grafika/LAB03/app.h
+wx-3.0/wx/wx.h
+-
+frame.h
+/home/grzegorz/Dokumenty/Grafika/LAB03/frame.h
+
+/home/grzegorz/Dokumenty/Grafika/LAB03/frame.h
+wx-3.0/wx/wx.h
+-
+wx-3.0/wx/dcbuffer.h
+-
+wx-3.0/wx/dcgraph.h
+-
+wx-3.0/wx/colordlg.h
+-
+unistd.h
+-
+future
+-
+
+/home/grzegorz/Dokumenty/Grafika/LAB03/main.cpp
+wx-3.0/wx/wx.h
+-
+app.h
+/home/grzegorz/Dokumenty/Grafika/LAB03/app.h
+
