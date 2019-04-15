@@ -42,28 +42,34 @@ void GUIMyFrame1::m_b_replace_click(wxCommandEvent& event) {
 }
 
 void GUIMyFrame1::m_b_rescale_click(wxCommandEvent& event) {
+    Img_Cpy = Img_Org.Copy();
     Img_Cpy.Rescale(320, 240);
-    this->ClearBackground();
+    wxClientDC dc(m_scrolledWindow);
+    m_scrolledWindow->DoPrepareDC(dc);
+    dc.Clear();
+    wasRescale = true;
     // TO DO: Zmiana rozmiarow do 320x240
 }
 
 void GUIMyFrame1::m_b_rotate_click(wxCommandEvent& event) {
     int w, h;
+    Img_Cpy = Img_Org.Copy();
     wxSize temp = Img_Org.GetSize();
     w = temp.GetX();
     h = temp.GetY();
-    Img_Cpy = Img_Org.Rotate(M_PI / 6, wxPoint(w / 2, h / 2));
+    Img_Cpy = Img_Cpy.Rotate(M_PI / 6, wxPoint(w / 2, h / 2));
+    wasRotation = true;
     // TO DO: Obrot o 30 stopni
 }
 
 void GUIMyFrame1::m_b_rotate_hue_click(wxCommandEvent& event) {
-    Img_Cpy = Img_Org;
+    Img_Cpy = Img_Org.Copy();
     Img_Cpy.RotateHue(180.0 / 360.0);
     // TO DO: Przesuniecie Hue o 180 stopni
 }
 
 void GUIMyFrame1::m_b_mask_click(wxCommandEvent& event) {
-    Img_Cpy = Img_Org;
+    Img_Cpy = Img_Org.Copy();
     Img_Cpy.SetMaskFromImage(Img_Mask, 0, 0, 0);
     Img_Cpy.RotateHue(1); //obrót o 360 stopni xDD
     ClearBackground();
@@ -142,9 +148,14 @@ void GUIMyFrame1::m_b_threshold_click(wxCommandEvent& event) {
 
 
 void GUIMyFrame1::Contrast(int value) {
+    if(wasRescale || wasRotation){
+        wasRescale = false;
+        wasRotation = false;
+        auto ev = wxCommandEvent{};
+        m_b_blur_click(ev);
+    }
     static int prev_contrast = value;
-    double factor = value < 0 ? value / 100.0 + 1.0 : value /  10.0 ;
-
+    double factor = (value + 100.0 ) / 10;
     if (abs(prev_contrast - value) > KIND_OF_SMALL_NUMBER) {
         int size = Img_Org.GetHeight() * Img_Org.GetWidth();
         unsigned char* data = Img_Org.GetData();
@@ -173,6 +184,12 @@ void GUIMyFrame1::Repaint() {
 
 
 void GUIMyFrame1::Brightness(int value) {
+    if(wasRescale || wasRotation){
+        wasRescale = false;
+        wasRotation = false;
+        auto ev = wxCommandEvent{};
+        m_b_blur_click(ev);
+    }
     static int prev_val = value;
 //    Img_Cpy = Img_Org.Copy();
     if (KIND_OF_SMALL_NUMBER < std::abs(prev_val - value)) {

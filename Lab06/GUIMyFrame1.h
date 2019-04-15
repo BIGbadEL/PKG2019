@@ -45,6 +45,8 @@ class GUIMyFrame1 : public MyFrame1
    Img_Cpy,        // wszystkie zmiany beda wykonywane na tej kopii obrazka
    Img_Mask;       // tu bedzie przechowywana maska
    bool isMirror = false;
+   bool wasRotation = false;
+   bool wasRescale = false;
   void Brightness(int value);     // funkcja zmieniajaca jasnosc obrazka
   void Contrast(int value);       // funkcja zmieniajaca kontrast obrazka
   void Repaint();
