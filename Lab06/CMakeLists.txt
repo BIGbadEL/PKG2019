@@ -9,7 +9,6 @@ include(${wxWidgets_USE_FILE})
 add_executable(lab04 main.cpp
         GUI.cpp GUI.h
         GUIMyFrame1.cpp GUIMyFrame1.h
-        image.h
         )
 
 target_link_libraries(lab04 ${wxWidgets_LIBRARIES})

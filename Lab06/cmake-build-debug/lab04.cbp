@@ -106,9 +106,6 @@
 		<Unit filename="/home/grzegorz/Dokumenty/Grafika/Lab06/GUIMyFrame1.h">
 			<Option target="lab04"/>
 		</Unit>
-		<Unit filename="/home/grzegorz/Dokumenty/Grafika/Lab06/image.h">
-			<Option target="lab04"/>
-		</Unit>
 		<Unit filename="/home/grzegorz/Dokumenty/Grafika/Lab06/main.cpp">
 			<Option target="lab04"/>
 		</Unit>

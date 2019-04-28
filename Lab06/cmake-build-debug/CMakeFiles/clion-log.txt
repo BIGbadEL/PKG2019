@@ -1,4 +1,4 @@
-/snap/clion/67/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -G "CodeBlocks - Unix Makefiles" /home/grzegorz/Dokumenty/Grafika/Lab06
+/home/grzegorz/clion-2019.1.2/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=/usr/bin/gcc -DCMAKE_CXX_COMPILER=/usr/bin/g++ -G "CodeBlocks - Unix Makefiles" /home/grzegorz/Dokumenty/Grafika/Lab06
 -- Configuring done
 -- Generating done
 -- Build files have been written to: /home/grzegorz/Dokumenty/Grafika/Lab06/cmake-build-debug
