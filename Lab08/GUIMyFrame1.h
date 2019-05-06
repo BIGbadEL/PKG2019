@@ -29,6 +29,10 @@ class GUIMyFrame1 : public MyFrame1
 		void CenzuraClick( wxCommandEvent& event );
 		void ErodeClick( wxCommandEvent& event );
 		void AnimacjaCheck( wxCommandEvent& event );
+		void update(wxCommandEvent& event){
+		    Repaint();
+		}
+        void Repaint();
 	public:
 		/** Constructor */
 		GUIMyFrame1( wxWindow* parent );
@@ -45,7 +49,6 @@ class GUIMyFrame1 : public MyFrame1
 		int window_height;
 		// do rysowania co sie dzieje
 		wxString path;
-		void Repaint();
 };
 
 #endif // __GUIMyFrame1__

@@ -7,6 +7,7 @@ GUIMyFrame1::GUIMyFrame1(wxWindow* parent)
         :
         MyFrame1(parent) {
     image = wxImage(1, 1);
+    Bind(wxEVT_UPDATE_UI, &GUIMyFrame1::update, this);
 }
 
 void GUIMyFrame1::WindowSizeChanged(wxSizeEvent& event) {
@@ -125,21 +126,25 @@ void GUIMyFrame1::Repaint() {
 
     if (anim) {
         static int step = 0;
-        step += 5;
+        step += 10;
         step = step > 180 ? -180 : step;
         if (!image.Ok()) return;
         //image = copy.Copy();
         int width = image.GetWidth();
         int height = image.GetHeight();
         cimg_library::CImg<float> gauss(width, height, 1, 3);
+        cimg_library::CImg<float> gauss2(width, height, 1, 3);
         int x = 1;
         gauss.draw_gaussian(width / 2 + 300 * sin(step * M_PI / 180.0), height / 2 + 100 * cos(step * M_PI / 180.0),
                             100.0, &x);
+        gauss2.draw_gaussian(width / 2 - 300 * sin(step * M_PI / 180.0), height / 2 - 100 * cos(step * M_PI / 180.0),
+                              100.0, &x);
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                image.SetRGB(i, j, copy.GetRed(i, j) * gauss(i, j), copy.GetGreen(i, j) * gauss(i, j),
-                             copy.GetBlue(i, j) * gauss(i, j));
+                double temp = (gauss(i, j) + gauss2(i, j)) < 1.0 ? (gauss(i, j) + gauss2(i, j)) : 1.0;
+                image.SetRGB(i, j, copy.GetRed(i, j) * temp, copy.GetGreen(i, j) * temp,
+                             copy.GetBlue(i, j) * temp);
             }
         }
     }
