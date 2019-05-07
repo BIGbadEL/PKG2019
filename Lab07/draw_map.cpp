@@ -1,5 +1,6 @@
 #include <wx/wx.h>
 #include "GUIMyFrame1.h"
+#include <future>
 // UWAGA: TO JEST JEDYNY PLIK, KTORY NALEZY EDYTOWAC **************************
 
 double wk(double x, double y, double xk, double yk) {
@@ -47,13 +48,42 @@ void GUIMyFrame1::DrawMap(int N, float d[100][3], bool Contour, int MappingType,
         case 0:
             break;
         case 1:
-            for (int x = 0; x < 500; ++x) {
-                for (int y = 0; y < 500; ++y) {
-                    auto out = static_cast<unsigned char>(fabs(( diagram[x][y] - min ) * 255 / ( max - min )));
-                    memDC.SetPen(wxColor(255 - out, 0, out));
-                    memDC.DrawPoint(wxPoint(x, 500 - y));
+            std::async(std::launch::async,[&](){
+                for (int x = 0; x < 250; ++x) {
+                    for (int y = 0; y < 250; ++y) {
+                        auto out = static_cast<unsigned char>(fabs(( diagram[x][y] - min ) * 255 / ( max - min )));
+                        memDC.SetPen(wxColor(255 - out, 0, out));
+                        memDC.DrawPoint(wxPoint(x, 500 - y));
+                    }
                 }
-            }
+            });
+            std::async(std::launch::async,[&](){
+                for (int x = 250; x < 500; ++x) {
+                    for (int y = 0; y < 250; ++y) {
+                        auto out = static_cast<unsigned char>(fabs(( diagram[x][y] - min ) * 255 / ( max - min )));
+                        memDC.SetPen(wxColor(255 - out, 0, out));
+                        memDC.DrawPoint(wxPoint(x, 500 - y));
+                    }
+                }
+            });
+            std::async(std::launch::async,[&](){
+                for (int x = 0; x < 250; ++x) {
+                    for (int y = 250; y < 500; ++y) {
+                        auto out = static_cast<unsigned char>(fabs(( diagram[x][y] - min ) * 255 / ( max - min )));
+                        memDC.SetPen(wxColor(255 - out, 0, out));
+                        memDC.DrawPoint(wxPoint(x, 500 - y));
+                    }
+                }
+            });
+            std::async(std::launch::async,[&](){
+                for (int x = 250; x < 500; ++x) {
+                    for (int y = 250; y < 500; ++y) {
+                        auto out = static_cast<unsigned char>(fabs(( diagram[x][y] - min ) * 255 / ( max - min )));
+                        memDC.SetPen(wxColor(255 - out, 0, out));
+                        memDC.DrawPoint(wxPoint(x, 500 - y));
+                    }
+                }
+            });
             break;
         case 2:
             for (int x = 0; x < 500; ++x) {
@@ -77,110 +107,112 @@ void GUIMyFrame1::DrawMap(int N, float d[100][3], bool Contour, int MappingType,
             }
             break;
     }
-
-    if (Contour) {
-        double step = ( max - min ) / ( NoLevels  + 1);
-        bool cont_map[500][500];
-        int8_t ouput[250][250];
-        for (int i = 1; i <= NoLevels; ++i) {
-            double cont_val = min + i * step;
-            for (int x = 0; x < 500; ++x) {
-                for (int y = 0; y < 500; ++y) {
-                    cont_map[x][y] = diagram[x][y] > cont_val;
+    std::async(std::launch::async, [&](){
+        if (Contour) {
+            double step = ( max - min ) / ( NoLevels  + 1);
+            bool cont_map[500][500];
+            int8_t ouput[250][250];
+            for (int i = 1; i <= NoLevels; ++i) {
+                double cont_val = min + i * step;
+                for (int x = 0; x < 500; ++x) {
+                    for (int y = 0; y < 500; ++y) {
+                        cont_map[x][y] = diagram[x][y] > cont_val;
+                    }
                 }
-            }
 
-            memDC.SetPen(wxColor(0, 0, 0));
-            for (int x = 0; x < 500 - 2; x += 1) {
-                for (int y = 0; y < 500 - 2; y += 1) {
-                    if (cont_map[x][y] == false &&
-                        cont_map[x + 1][y] == false &&
-                        cont_map[x][y + 1] == false &&
-                        cont_map[x + 1][y + 1] == false) {
+                memDC.SetPen(wxColor(0, 0, 0));
+                for (int x = 0; x < 500 - 2; x += 1) {
+                    for (int y = 0; y < 500 - 2; y += 1) {
+                        if (cont_map[x][y] == false &&
+                            cont_map[x + 1][y] == false &&
+                            cont_map[x][y + 1] == false &&
+                            cont_map[x + 1][y + 1] == false) {
 //                        ouput[x / 2][y / 2] = 15;
-                    } else if (cont_map[x][y] == true &&
-                               cont_map[x + 1][y] == true &&
-                               cont_map[x][y + 1] == true &&
-                               cont_map[x + 1][y + 1] == true) {
+                        } else if (cont_map[x][y] == true &&
+                                   cont_map[x + 1][y] == true &&
+                                   cont_map[x][y + 1] == true &&
+                                   cont_map[x + 1][y + 1] == true) {
 //                        ouput[x / 2][y / 2] = 0;
-                    } else if (cont_map[x][y] == false &&
-                               cont_map[x + 1][y] == false &&
-                               cont_map[x][y + 1] == false &&
-                               cont_map[x + 1][y + 1] == true) {
-                        memDC.DrawPoint(wxPoint(x + 1, 500 - y - 1));
-                    } else if (cont_map[x][y] == false &&
-                               cont_map[x + 1][y] == false &&
-                               cont_map[x][y + 1] == true &&
-                               cont_map[x + 1][y + 1] == true) {
+                        } else if (cont_map[x][y] == false &&
+                                   cont_map[x + 1][y] == false &&
+                                   cont_map[x][y + 1] == false &&
+                                   cont_map[x + 1][y + 1] == true) {
+                            memDC.DrawPoint(wxPoint(x + 1, 500 - y - 1));
+                        } else if (cont_map[x][y] == false &&
+                                   cont_map[x + 1][y] == false &&
+                                   cont_map[x][y + 1] == true &&
+                                   cont_map[x + 1][y + 1] == true) {
 //                        memDC.DrawPoint(wxPoint(x + 1, y + 1));
 //                        memDC.DrawPoint(wxPoint(x + 1, y));
-                        memDC.DrawLine(wxPoint(x + 1, 500 - y - 1), wxPoint(x + 1, 500 - y));
-                    } else if (cont_map[x][y] == false &&
-                               cont_map[x + 1][y] == true &&
-                               cont_map[x][y + 1] == false &&
-                               cont_map[x + 1][y + 1] == false) {
-                        memDC.DrawPoint(wxPoint(x + 1, 500 - y));
-                    } else if (cont_map[x][y] == false &&
-                               cont_map[x + 1][y] == true &&
-                               cont_map[x][y + 1] == true &&
-                               cont_map[x + 1][y + 1] == false) {
-                        memDC.DrawLine(wxPoint(x, 500 - y - 1), wxPoint(x + 1, 500 - y));
-                    } else if (cont_map[x][y] == false &&
-                               cont_map[x + 1][y] == true &&
-                               cont_map[x][y + 1] == false &&
-                               cont_map[x + 1][y + 1] == true) {
-                        memDC.DrawLine(wxPoint(x + 1, 500 - y), wxPoint(x + 1, 500 - y - 1));
-                    } else if (cont_map[x][y] == false &&
-                               cont_map[x + 1][y] == true &&
-                               cont_map[x][y + 1] == true &&
-                               cont_map[x + 1][y + 1] == true) {
-                        memDC.DrawLine(wxPoint(x, 500 - y - 1), wxPoint(x + 1, 500 - y));
-                    } else if (cont_map[x][y] == true &&
-                               cont_map[x + 1][y] == false &&
-                               cont_map[x][y + 1] == false &&
-                               cont_map[x + 1][y + 1] == false) {
-                        memDC.DrawPoint(x, 500 - y);
-                    } else if (cont_map[x][y] == true &&
-                               cont_map[x + 1][y] == false &&
-                               cont_map[x][y + 1] == true &&
-                               cont_map[x + 1][y + 1] == false) {
-                        memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x, 500 - y - 1));
-                    } else if (cont_map[x][y] == true &&
-                               cont_map[x + 1][y] == false &&
-                               cont_map[x][y + 1] == false &&
-                               cont_map[x + 1][y + 1] == true) {
-                        memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x + 1, 500 - y - 1));
-                    } else if (cont_map[x][y] == true &&
-                               cont_map[x + 1][y] == true &&
-                               cont_map[x][y + 1] == false &&
-                               cont_map[x + 1][y + 1] == false) {
-                        memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x + 1, 500 - y - 1));
-                    } else if (cont_map[x][y] == true &&
-                               cont_map[x + 1][y] == true &&
-                               cont_map[x][y + 1] == false &&
-                               cont_map[x + 1][y + 1] == false) {
-                        memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x + 1, 500 - y));
-                    } else if (cont_map[x][y] == true &&
-                               cont_map[x + 1][y] == true &&
-                               cont_map[x][y + 1] == true &&
-                               cont_map[x + 1][y + 1] == false) {
-                        memDC.DrawLine(wxPoint(x, 500 - y - 1), wxPoint(x + 1, 500 - y));
-                    } else if (cont_map[x][y] == true &&
-                               cont_map[x + 1][y] == true &&
-                               cont_map[x][y + 1] == true &&
-                               cont_map[x + 1][y + 1] == false) {
-                        memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x + 1, 500 - y - 1));
-                    } else if (cont_map[x][y] == false &&
-                               cont_map[x + 1][y] == false &&
-                               cont_map[x][y + 1] == true &&
-                               cont_map[x + 1][y + 1] == false) {
-                        memDC.DrawPoint(x, 500 - y - 1);
+                            memDC.DrawLine(wxPoint(x + 1, 500 - y - 1), wxPoint(x + 1, 500 - y));
+                        } else if (cont_map[x][y] == false &&
+                                   cont_map[x + 1][y] == true &&
+                                   cont_map[x][y + 1] == false &&
+                                   cont_map[x + 1][y + 1] == false) {
+                            memDC.DrawPoint(wxPoint(x + 1, 500 - y));
+                        } else if (cont_map[x][y] == false &&
+                                   cont_map[x + 1][y] == true &&
+                                   cont_map[x][y + 1] == true &&
+                                   cont_map[x + 1][y + 1] == false) {
+                            memDC.DrawLine(wxPoint(x, 500 - y - 1), wxPoint(x + 1, 500 - y));
+                        } else if (cont_map[x][y] == false &&
+                                   cont_map[x + 1][y] == true &&
+                                   cont_map[x][y + 1] == false &&
+                                   cont_map[x + 1][y + 1] == true) {
+                            memDC.DrawLine(wxPoint(x + 1, 500 - y), wxPoint(x + 1, 500 - y - 1));
+                        } else if (cont_map[x][y] == false &&
+                                   cont_map[x + 1][y] == true &&
+                                   cont_map[x][y + 1] == true &&
+                                   cont_map[x + 1][y + 1] == true) {
+                            memDC.DrawLine(wxPoint(x, 500 - y - 1), wxPoint(x + 1, 500 - y));
+                        } else if (cont_map[x][y] == true &&
+                                   cont_map[x + 1][y] == false &&
+                                   cont_map[x][y + 1] == false &&
+                                   cont_map[x + 1][y + 1] == false) {
+                            memDC.DrawPoint(x, 500 - y);
+                        } else if (cont_map[x][y] == true &&
+                                   cont_map[x + 1][y] == false &&
+                                   cont_map[x][y + 1] == true &&
+                                   cont_map[x + 1][y + 1] == false) {
+                            memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x, 500 - y - 1));
+                        } else if (cont_map[x][y] == true &&
+                                   cont_map[x + 1][y] == false &&
+                                   cont_map[x][y + 1] == false &&
+                                   cont_map[x + 1][y + 1] == true) {
+                            memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x + 1, 500 - y - 1));
+                        } else if (cont_map[x][y] == true &&
+                                   cont_map[x + 1][y] == true &&
+                                   cont_map[x][y + 1] == false &&
+                                   cont_map[x + 1][y + 1] == false) {
+                            memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x + 1, 500 - y - 1));
+                        } else if (cont_map[x][y] == true &&
+                                   cont_map[x + 1][y] == true &&
+                                   cont_map[x][y + 1] == false &&
+                                   cont_map[x + 1][y + 1] == false) {
+                            memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x + 1, 500 - y));
+                        } else if (cont_map[x][y] == true &&
+                                   cont_map[x + 1][y] == true &&
+                                   cont_map[x][y + 1] == true &&
+                                   cont_map[x + 1][y + 1] == false) {
+                            memDC.DrawLine(wxPoint(x, 500 - y - 1), wxPoint(x + 1, 500 - y));
+                        } else if (cont_map[x][y] == true &&
+                                   cont_map[x + 1][y] == true &&
+                                   cont_map[x][y + 1] == true &&
+                                   cont_map[x + 1][y + 1] == false) {
+                            memDC.DrawLine(wxPoint(x, 500 - y), wxPoint(x + 1, 500 - y - 1));
+                        } else if (cont_map[x][y] == false &&
+                                   cont_map[x + 1][y] == false &&
+                                   cont_map[x][y + 1] == true &&
+                                   cont_map[x + 1][y + 1] == false) {
+                            memDC.DrawPoint(x, 500 - y - 1);
+                        }
                     }
                 }
             }
-        }
 
-    }
+        }
+    });
+
 
     // demo.....
     memDC.SetPen(*wxBLACK_PEN);

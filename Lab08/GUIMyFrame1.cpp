@@ -59,6 +59,7 @@ void GUIMyFrame1::WczytajObrazekClick(wxCommandEvent& event) {
 }
 
 void GUIMyFrame1::CenzuraClick(wxCommandEvent& event) {
+    if (anim) return;
     anim = false;
     if (!image.Ok()) return;
     image = copy.Copy();
@@ -118,12 +119,12 @@ void GUIMyFrame1::Repaint() {
     // pobiera kontekst okna
     wxClientDC dc(m_panel3);
     // resize
+
     m_panel3->SetSize(window_width - 215, window_height - 45);
     wxImage image_temp = image.Scale(window_width - 215, window_height - 45);
     // tworzy tymczasowa bitmape na podstawie image_temp
     wxBitmap bitmap(image_temp);
     // rysuje
-
     if (anim) {
         static int step = 0;
         step += 10;
@@ -138,7 +139,7 @@ void GUIMyFrame1::Repaint() {
         gauss.draw_gaussian(width / 2 + 300 * sin(step * M_PI / 180.0), height / 2 + 100 * cos(step * M_PI / 180.0),
                             100.0, &x);
         gauss2.draw_gaussian(width / 2 - 300 * sin(step * M_PI / 180.0), height / 2 - 100 * cos(step * M_PI / 180.0),
-                              100.0, &x);
+                             100.0, &x);
 
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
@@ -147,6 +148,12 @@ void GUIMyFrame1::Repaint() {
                              copy.GetBlue(i, j) * temp);
             }
         }
+        //auto ev = wxUpdateUIEvent();
+        // ProcessEvent(ev);
+//       ProcessPendingEvents();
+//        wxPostEvent(this, wxUpdateUIEvent());
+        Refresh();
+        Update();
     }
 
     dc.DrawBitmap(bitmap, 0, 0, true);
